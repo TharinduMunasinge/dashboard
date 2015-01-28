@@ -80,8 +80,97 @@
 
              <hr>
              <h4>Configure Chart</h4>
-             
 
+              <div class="form">
+               
+               <div class="row">
+
+                  <div class="col-md-6">
+                    <div class="panel panel-default">
+                      <div class="panel-heading">
+                        <h3 class="panel-title">Rows</h3>
+                      </div>
+                      <div class="panel-body">
+                        
+                        <div class="input-group input-row-group-multiple-select col-xs-12 rowuniqueNum">
+                            <select id="selectRowsId" class="form-control" name="values[]">
+                                <option value="">Select</option>
+                            </select>
+
+                                <span class="input-group-addon input-row-group-addon-remove">
+                                <span class="glyphicon glyphicon-remove"></span>
+                                </span>
+                        </div>
+
+
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="col-md-6">
+                      <div class="panel panel-default">
+                        <div class="panel-heading">
+                          <h3 class="panel-title">Columns</h3>
+                        </div>
+                        <div class="panel-body">
+                          <div class="input-group input-column-group-multiple-select col-xs-12 columnuniqueNum">
+                              <select id="selectColumnsId" class="form-control" name="values[]">
+                                  <option value="">Select</option>
+
+                              </select>
+
+                             <span class="input-group-addon input-column-group-addon-remove">
+                                  <span class="glyphicon glyphicon-remove"></span>
+                              </span>
+                          </div>
+                        </div>
+                      </div>
+                  </div>
+                  
+             </div>
+             <!-- /row cols+rows -->
+
+             <div class="row">
+                <div class="col-md-12">
+                  <div class="panel panel-default">
+                    <div class="panel-heading">
+                      <h3 class="panel-title">Preview</h3>
+                    </div>
+                    <div class="panel-body">
+                      <div id="chart"></div>
+                    </div>
+                  </div>
+                </div>
+             </div>
+
+
+
+             <div class="row">
+               <div class="col-md-12">
+                <div class="form-group">
+                   <label for="exampleInputEmail1">Visualization Name</label>
+                   <input type="email" class="form-control" id="exampleInputEmail1" placeholder="">
+                 </div>
+                 <div class="form-group">
+                    <label for="exampleInputEmail1">Tooltip</label>
+                    <input type="email" class="form-control" id="exampleInputEmail1" placeholder="">
+                  </div>
+                  <div class="form-group">
+                    <label for="exampleInputPassword1">Label</label>
+                    <input type="password" class="form-control" id="exampleInputPassword1" placeholder="">
+                  </div>
+                 
+                  <div class="checkbox">
+                    <label>
+                      <input type="checkbox"> Check me out
+                    </label>
+                  </div>
+                  <a href="flow-final.html"><button type="button" class="btn btn-success pull-right">Save Changes</button></a>
+                </div> 
+             </div>
+
+              </div>
+                <!-- /form -->
                       
             </div>  <!-- /panel-body -->
           
@@ -121,7 +210,6 @@
 
 
     <hr>
-
     <p class="small text-muted">Built with &#9829; by <a href="https://wso2.com">WSO2</a></p>
 
   </div>
@@ -136,6 +224,8 @@
 
   <script src="assets/lib/keen-js/dist/keen.min.js"></script>
   <script src="assets/js/meta.js"></script>
+  <script type="text/javascript" src="assets/js/d3.min.js"></script>
+  <script type="text/javascript" src="assets/js/generic_draw.js"></script>
 
 </body>
 </html>
