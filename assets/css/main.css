@@ -3,8 +3,8 @@
  */
 
 body {
-  padding-top: 80px;
-  padding-bottom: 40px;
+  /*padding-top: 80px;*/
+  /*padding-bottom: 40px;*/
   /*background-color: #f5f5f5;*/
 }
 
@@ -113,41 +113,3 @@ body {
 
 
 
-/*from Damith*/
-
-
-
-
-div.input-row-group-multiple-select:last-child span.input-row-group-addon-remove{
-    display: none;
-}
-
-span.input-row-group-addon-remove{
-    cursor: pointer;
-}
-
-div.input-column-group-multiple-select:last-child span.input-column-group-addon-remove{
-    display: none;
-}
-
-span.input-column-group-addon-remove{
-    cursor: pointer;
-}
-
-.input-group .form-control {
-    margin-bottom: 4px;
-
-}
-
-.axis path,
-.axis line {
-    fill: none;
-    shape-rendering: crispEdges;
-    stroke: grey;
-    stroke-width: 2;
-}
-
-.axis text {
-    font-family: sans-serif;
-    font-size: 11px;
-}
