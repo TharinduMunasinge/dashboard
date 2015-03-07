@@ -4,6 +4,7 @@
   <title>WSO2 Analytics Dashboard</title>
   <link rel="stylesheet" href="assets/css/bootstrap.min.css">
   <link rel="stylesheet" href="assets/css/keen-dashboards.css">
+  <link rel="stylesheet" href="assets/css/simple-sidebar.css">
   <link rel="stylesheet" href="assets/css/main.css">
 </head>
 
@@ -21,57 +22,146 @@
         <a class="navbar-brand" href="../">
           <span class="glyphicon glyphicon-stats"></span>
         </a>
-        <a class="navbar-brand" href="./">Analytics Dashboards</a>
+        <a class="navbar-brand" href="./">Analytics Dashboard</a>
       </div>
       <div class="navbar-collapse collapse">
         <ul class="nav navbar-nav navbar-left">
-          <li><a href="http://localhost/dashboard">Home</a></li>
-          <li><a href="http://localhost/dashboard">Documentation</a></li>
-          <li><a href="http://localhost/dashboard">Support</a></li>
+          <li>
+            <button type="button" class="btn btn-default navbar-btn" id="menu-toggle">
+              <span class="glyphicon glyphicon-menu-hamburger" aria-hidden="true"></span>
+            </button>
+          </li>
+          <li><a href="http://localhost/dashboard" title="Add Widget"><span class="glyphicon glyphicon glyphicon-th-large"></span></a></li>
+          <li><a href="http://localhost/dashboard" title="New Dashboard"><span class="glyphicon glyphicon-plus-sign"></span></a></li>
+          <li><a href="http://localhost/dashboard" title="Edit Dashboard"><span class="glyphicon glyphicon-pencil"></span></a></li>
+          <li><a href="http://localhost/dashboard" title="Delete Dashboard"><span class="glyphicon glyphicon-remove-circle"></span></a></li>
+        </ul>
+
+        <ul class="nav navbar-nav navbar-right">
+          <li><a href="../navbar/">Help</a></li>
+          <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Dunith Dan<span class="caret"></span></a>
+            <ul class="dropdown-menu" role="menu">
+              <li><a href="#">Preferences</a></li>
+              <li class="divider"></li>
+              <li class="dropdown-header">Nav header</li>
+              <li><a href="#">Sign Out</a></li>
+            </ul>
+        </li>
         </ul>
       </div>
     </div>
   </div>
 
-  <div class="container-fluid">
+  <div id="wrapper">
 
-      <div class="row">
-
-         <div class="col-sm-8">
-           <div class="panel panel-default">
-             <div class="panel-heading">
-               <h3 class="panel-title">Panel title</h3>
-             </div>
-             <div class="panel-body">
-               Panel content
-             </div>
-           </div>
-         </div>
-
-         <div class="col-sm-4">
-           <div class="panel panel-default">
-             <div class="panel-heading">
-               <h3 class="panel-title">Panel title</h3>
-             </div>
-             <div class="panel-body">
-               Panel content
-             </div>
-           </div>
-         </div>
-
-      </div>
-      <!-- /row -->
-
-       <hr>
-
-       <p class="small text-muted">Built with &#9829; by <a href="https://wso2.com">WSO2</a></p>
+    <!-- Sidebar -->
+    <div id="sidebar-wrapper">
+        <ul class="nav nav-stacked sidebar-nav">
+          <li>
+            <a href="index.html">
+                <i class="menu-icon glyphicon glyphicon-home"></i>
+                <span class="menu-text">Sales</span>
+            </a>
+          </li>
+          <li>
+            <a href="index.html">
+                <i class="menu-icon glyphicon glyphicon-th"></i>
+                <span class="menu-text">Dashboard</span>
+            </a>
+          </li>
+            
+        </ul>
 
 
-  </div>  
-  <!-- /container -->
+    </div>
+    <!-- /#sidebar-wrapper -->
+
+    <!-- Page Content -->
+    <div id="page-content-wrapper">
+        <div class="container-fluid">
+            <div class="row">
+
+               <div class="col-lg-8">
+                 <div class="panel panel-default">
+                   <div class="panel-body">
+
+                    <div id="canvas"></div>
+
+                   </div>
+                 </div>
+               </div>
+
+               <div class="col-lg-4">
+                 <div class="panel panel-default">
+                   <div class="panel-body">
+                    <p>Some busllhsit goes here</p>
+                   </div>
+                 </div>
+               </div>
+
+            </div>
+            <!-- /row -->
+
+           <hr>
+           <p class="small text-muted">Built with &#9829; by <a href="https://wso2.com">WSO2</a></p>
+
+        </div>  
+        <!-- /container -->
+    </div>
+    <!-- /#page-content-wrapper -->
+
+
+  </div>
+  <!-- /wrapper -->
+
 
   <script src="assets/js/jquery.min.js"></script>
   <script src="assets/js/bootstrap.min.js"></script>
+  <script src="assets/js/d3.min.js"></script>
+  <script src="assets/js/vega.js"></script>
+  <script src="assets/js/igviz.js"></script>
+
+  <!-- Menu Toggle Script -->
+  <script>
+  $("#menu-toggle").click(function(e) {
+      e.preventDefault();
+      $("#wrapper").toggleClass("toggled");
+  });
+
+  // var dataTable = {
+  //         "metadata" : {
+  //             "names" : ["Year","Sales","Expenses"],
+  //             "types" : ["N","N","N"]
+  //         },
+  //         "data" : [
+  //         ["2004",  1000,      400],
+  //         ["2005",  1170,      460],
+  //         ["2006",  660,       1120],
+  //         ["2007",  1030,      540]
+  //         ]
+  //     };
+
+     
+
+  //     var width = document.getElementById("canvas").clientWidth ;
+  //     var height = document.getElementById("canvas").clientHeight;
+
+  //     var config = {
+  //         "xAxis": 0,
+  //         "yAxis": 1,
+  //         "padding": 60,
+  //         "width": width,
+  //         "height": height,
+  //         "chartType": "bar"
+  //     }
+
+
+  //     //draw a line chart on div #scatter
+  //     var chart = igviz.plot("#canvas",config,dataTable);
+
+
+  </script>
 
 </body>
 </html>
