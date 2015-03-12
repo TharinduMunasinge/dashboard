@@ -151,7 +151,9 @@
 
 
           item.on('click',function (e) {
-            drawDashboard(dashboard.id);
+
+              drawDashboard(dashboard.id);
+
           });
         });
 
@@ -166,15 +168,21 @@
         //clean up the canvas
         $("#canvas").empty();
 
+          //Remove the data from the #canvans so that we can redraw the widgets
+          $("#canvas").removeData();
+
         var gridster = $("#canvas").gridster( {
             widget_base_dimensions: [100, 100],
             widget_margins: [5, 5],
             min_cols: 1,
             max_cols: 8,
             avoid_overlapped_widgets: false,
-            autogenerate_stylesheet: true,
+            autogenerate_stylesheet: true
 
         }).data('gridster');
+
+
+
 
         //draw each widget
         for (var i = 0; i < widgets.length; i++) {
@@ -187,7 +195,10 @@
 
     function drawWidget(gridster,widgetId) {
       console.log("drawing widget " + widgetId); 
-      $.getJSON("data/widgets/" + widgetId + ".json",function (widget) {
+      $.getJSON("data/dataviews/1.json",function (data) {
+//      $.getJSON("data/widgets/" + widgetId + ".json",function (widget) {
+
+          var widget = data.widgets[0];
         //create a div element to render this widget on
         createCanvas(gridster,widget);
 
@@ -215,6 +226,7 @@
             ]);
 
         //do some width hiegth manipulation
+
         widget.config.width = widget.dimensions.width * 100;        
         widget.config.height = widget.dimensions.height * 100;     
 
@@ -232,11 +244,11 @@
       var container = jQuery('<li/>');
 
       var panel = jQuery('<div/>', {
-        class: 'panel panel-default'
+//        class: 'panel panel-default'
       });
 
       var panelBody = jQuery('<div/>', {
-        class: 'panel-body',
+//        class: 'panel-body',
         id: widget.id,
         text: widget.title
       }).appendTo(panel);
@@ -244,11 +256,109 @@
       panel.appendTo(container);
       container.appendTo(canvas);
 
-      gridster.add_widget(container,widget.dimensions.width, widget.dimensions.height);
+      gridster.add_widget(createPanelWithGadget('dummyDiv',container),widget.dimensions.width, widget.dimensions.height);
 
     }
 
-     
+    function createPanelWithGadget(divId, gadgetObject){
+        var divPanel = $('<div>',{class:'panel panel-default',
+            height:'auto'
+        });
+
+        var  width=gadgetObject.find('.marks').length;//attr('height');
+         var height=gadgetObject.find('svg').attr('width');
+        console.log('w : '+width);
+        console.log('h : '+height);
+
+        //divPanel.appendTo($('#panels'));
+
+
+        var divPanelHeading = $('<div>',{class:'panel-heading'});
+        divPanelHeading.appendTo(divPanel);
+
+        var divBtnGroup = $('<div>',{class:'btn-group pull-right'});
+        divBtnGroup.appendTo(divPanelHeading);
+
+        var aConfigs = $('<a>',{class:'btn-control'});
+        var spanConfig = $('<span>',{class:'glyphicon glyphicon-cog btn'});
+        spanConfig.appendTo(aConfigs);
+        aConfigs.appendTo(divBtnGroup);
+
+        aConfigs.on('click',function () { $('#myModal').modal({
+            keyboard: true
+        })});
+
+
+        var aFullScreen = $('<a>',{class:'btn-control'});
+        var spanFullScreen = $('<span>',{class:'glyphicon glyphicon-fullscreen btn'});
+        spanFullScreen.appendTo(aFullScreen);
+        aFullScreen.appendTo(divBtnGroup);
+
+
+        aFullScreen.on('click',function(){
+
+            var widget =  $(this).closest('.panel-default');
+            var t = aFullScreen.find('span');
+
+            if(widget.hasClass('maximized')){
+                widget.removeClass('maximized');
+                $('.panel-default').show();
+                widget.attr('data-sizex', 4);
+                widget.attr('data-sizey', 4);
+                t.addClass('glyphicon-fullscreen');
+                t.removeClass('glyphicon-resize-small')
+            }
+            else{
+                $('.panel-default').hide();
+                widget.show();
+                widget.attr('data-sizex', 5);
+                widget.attr('data-sizey', 5);
+                widget.addClass('maximized');
+
+                t.removeClass('glyphicon-fullscreen');
+                t.addClass('glyphicon-resize-small');
+
+                var m = divPanel.height();
+                var h = gadgetObject.find('svg').attr('height', 600);
+                console.log('h : ' + divPanel.height());
+
+                //console.log('t: ' + t);
+
+
+
+            }
+            var l = $(this).parents('.panel-default').length;
+
+            console.log('len : ' + l);
+        });
+
+
+
+        var aRemove = $('<a>',{class:'btn-control'});
+        var spanRemove = $('<span>',{class:'glyphicon glyphicon-remove btn'});
+        spanRemove.appendTo(aRemove);
+        aRemove.appendTo(divBtnGroup);
+
+        aRemove.on('click',function(){
+            $(this).closest('.panel-default').remove();
+        });
+
+
+        var h1PanelTitle = $('<h1>',{class:'panel-title', text:'title'});
+        h1PanelTitle.appendTo(divPanelHeading);
+
+        var divClearFix = $('<div>',{class:'clearfix'});
+        divClearFix.appendTo(divPanelHeading);
+
+
+        var divPanelBody = $('<div>',{class:'panel-body', text:'content', id:divId});
+        divPanelBody.appendTo(divPanel);
+
+        gadgetObject.appendTo(divPanelBody);
+
+//        divClearFix.appendTo(divPanel);
+        return divPanel;
+    }
 
   </script>
 

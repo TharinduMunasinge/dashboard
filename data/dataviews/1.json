@@ -8,7 +8,7 @@
     "filter": "some lucene query",
     "widgets": [
         {
-            "id": "123qasdre",
+            "id": "qasdre",
             "title": "Sales By Region",
             "dimensions": {
                 "row": 1,
@@ -23,7 +23,7 @@
             }
         },
         {
-            "id": "bdajsdhkashd2374682",
+            "id": "badbs",
             "title": "Sales By Employee",
             "dimensions": {
                 "row": 1,
