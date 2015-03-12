@@ -98,7 +98,6 @@
   <script src="assets/js/d3.min.js"></script>
   <script src="assets/js/vega.js"></script>
   <script src="assets/js/igviz.js"></script>
-  <!-- // <script src="assets/js/jquery.gridster.min.js"></script> -->
 
   <!-- Menu Toggle Script -->
   <script>
@@ -119,27 +118,6 @@
       });
 
       $.getJSON( "data/dashboards.json", function( data ) {
-        // var groups = [];
-        // data.forEach(function(d,index){
-        //   var group = d.group;
-        //   if($.inArray(group,groups) == -1) {
-        //     groups.push(group);
-        //   }
-        // });   
-        // var dashboards = groups.map(function (g,i){
-        //   return {
-        //     name : g,
-        //     values : data.map(function(d,i) {
-        //       if(d.group == g) { 
-        //         return d.title;
-        //       } 
-        //       return -1;
-        //     })
-        //   }
-        // });
-        // // console.log(dashboards); 
-
-
         data.forEach(function (dashboard,index) {
           var item = jQuery('<a/>', {
             class: 'list-group-item',
@@ -149,12 +127,12 @@
             text: dashboard.title
           }).appendTo(listGroup);
 
-
           item.on('click',function (e) {
-
               drawDashboard(dashboard.id);
-
           });
+          if(index == 0 ) {
+            drawDashboard(dashboard.id);
+          }
         });
 
       });
@@ -167,9 +145,8 @@
         var widgets = data.widgets;
         //clean up the canvas
         $("#canvas").empty();
-
-          //Remove the data from the #canvans so that we can redraw the widgets
-          $("#canvas").removeData();
+        //Remove the data from the #canvans so that we can redraw the widgets
+        $("#canvas").removeData();
 
         var gridster = $("#canvas").gridster( {
             widget_base_dimensions: [100, 100],
@@ -180,10 +157,6 @@
             autogenerate_stylesheet: true
 
         }).data('gridster');
-
-
-
-
         //draw each widget
         for (var i = 0; i < widgets.length; i++) {
           drawWidget(gridster,widgets[i]);
@@ -195,10 +168,10 @@
 
     function drawWidget(gridster,widgetId) {
       console.log("drawing widget " + widgetId); 
-      $.getJSON("data/dataviews/1.json",function (data) {
-//      $.getJSON("data/widgets/" + widgetId + ".json",function (widget) {
-
-          var widget = data.widgets[0];
+      var dataview = widgetId.split(".")[0];
+      var widgetIndex = widgetId.split(".")[1];
+      $.getJSON("data/dataviews/" + dataview + ".json",function (data) {
+        var widget = data.widgets[widgetIndex];
         //create a div element to render this widget on
         createCanvas(gridster,widget);
 
@@ -249,8 +222,7 @@
 
       var panelBody = jQuery('<div/>', {
 //        class: 'panel-body',
-        id: widget.id,
-        text: widget.title
+        id: widget.id
       }).appendTo(panel);
 
       panel.appendTo(container);
@@ -272,9 +244,6 @@
          var height=gadgetObject.find('svg').attr('width');
         console.log('w : '+width);
         console.log('h : '+height);
-
-        //divPanel.appendTo($('#panels'));
-
 
         var divPanelHeading = $('<div>',{class:'panel-heading'});
         divPanelHeading.appendTo(divPanel);
@@ -346,15 +315,13 @@
             $(this).closest('.panel-default').remove();
         });
 
-
         var h1PanelTitle = $('<h1>',{class:'panel-title', text:'title'});
         h1PanelTitle.appendTo(divPanelHeading);
 
         var divClearFix = $('<div>',{class:'clearfix'});
         divClearFix.appendTo(divPanelHeading);
 
-
-        var divPanelBody = $('<div>',{class:'panel-body', text:'content', id:divId});
+        var divPanelBody = $('<div>',{class:'panel-body', id:divId});
         divPanelBody.appendTo(divPanel);
 
         gadgetObject.appendTo(divPanelBody);

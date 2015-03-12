@@ -8,15 +8,5 @@
         "title": "Message Console",
         "group": "Default",
         "id": "2"
-    },
-    {
-        "title": "Activity Dashboard",
-        "group": "Default",
-        "id": "3"
-    },
-    {
-        "title": "Log Analyzer",
-        "group": "Default",
-        "id": "4"
     }
 ]

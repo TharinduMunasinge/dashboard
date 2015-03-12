@@ -5,7 +5,7 @@
 	"role" : "admin",
 
 	"widgets" : [
-		"sales.1qa23455", "engineering.17543"
+		"1.0", "1.1"
 	]
 
 }

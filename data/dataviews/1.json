@@ -3,12 +3,12 @@
     "type": "batch",
     "datasource": "sales",
     "columns": [
-        "orderId:string,date:string,amount:float"
+        "orderId:string","date:string","amount:float"
     ],
     "filter": "some lucene query",
     "widgets": [
         {
-            "id": "qasdre",
+            "id": "a",
             "title": "Sales By Region",
             "dimensions": {
                 "row": 1,
@@ -23,7 +23,7 @@
             }
         },
         {
-            "id": "badbs",
+            "id": "b",
             "title": "Sales By Employee",
             "dimensions": {
                 "row": 1,
@@ -32,7 +32,7 @@
                 "height": 2
             },
             "config": {
-                "chartType": "line",
+                "chartType": "bar",
                 "xAxis": 0,
                 "yAxis": 1
             }
