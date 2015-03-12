@@ -5,6 +5,7 @@
   <link rel="stylesheet" href="assets/css/bootstrap.min.css">
   <link rel="stylesheet" href="assets/css/keen-dashboards.css">
   <link rel="stylesheet" href="assets/css/simple-sidebar.css">
+  <link rel="stylesheet" href="assets/css/jquery.gridster.min.css">
   <link rel="stylesheet" href="assets/css/main.css">
 </head>
 
@@ -38,9 +39,9 @@
         </ul>
 
         <ul class="nav navbar-nav navbar-right">
-          <li><a href="../navbar/">Help</a></li>
+          <li><a href="datasets.html">Dataset Explorer</a></li>
           <li class="dropdown">
-            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Dunith Dan<span class="caret"></span></a>
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Dunith<span class="caret"></span></a>
             <ul class="dropdown-menu" role="menu">
               <li><a href="#">Preferences</a></li>
               <li class="divider"></li>
@@ -57,56 +58,31 @@
 
     <!-- Sidebar -->
     <div id="sidebar-wrapper">
-        <ul class="nav nav-stacked sidebar-nav">
-          <li>
-            <a href="index.html">
-                <i class="menu-icon glyphicon glyphicon-home"></i>
-                <span class="menu-text">Sales</span>
-            </a>
-          </li>
-          <li>
-            <a href="index.html">
-                <i class="menu-icon glyphicon glyphicon-th"></i>
-                <span class="menu-text">Dashboard</span>
-            </a>
-          </li>
-            
-        </ul>
 
+        <div class="panel panel-default">
+          <div class="panel-body" id="sidebar">
 
+          </div>
+        </div>
     </div>
     <!-- /#sidebar-wrapper -->
 
     <!-- Page Content -->
     <div id="page-content-wrapper">
-        <div class="container-fluid">
+        <!-- <div class="container-fluid"> -->
             <div class="row">
 
-               <div class="col-lg-8">
-                 <div class="panel panel-default">
-                   <div class="panel-body">
-
-                    <div id="canvas"></div>
-
-                   </div>
-                 </div>
-               </div>
-
-               <div class="col-lg-4">
-                 <div class="panel panel-default">
-                   <div class="panel-body">
-                    <p>Some busllhsit goes here</p>
-                   </div>
-                 </div>
-               </div>
+                <div  class="gridster">
+                  <ul id="canvas"></ul>
+                </div>
 
             </div>
             <!-- /row -->
 
-           <hr>
-           <p class="small text-muted">Built with &#9829; by <a href="https://wso2.com">WSO2</a></p>
+           <!-- <hr>
+           <p class="small text-muted">Built with &#9829; by <a href="https://wso2.com">WSO2</a></p> -->
 
-        </div>  
+        <!-- </div>   -->
         <!-- /container -->
     </div>
     <!-- /#page-content-wrapper -->
@@ -118,48 +94,161 @@
 
   <script src="assets/js/jquery.min.js"></script>
   <script src="assets/js/bootstrap.min.js"></script>
+  <script src="assets/js/jquery.gridster.min.js"></script>
   <script src="assets/js/d3.min.js"></script>
   <script src="assets/js/vega.js"></script>
   <script src="assets/js/igviz.js"></script>
+  <!-- // <script src="assets/js/jquery.gridster.min.js"></script> -->
 
   <!-- Menu Toggle Script -->
   <script>
-  $("#menu-toggle").click(function(e) {
-      e.preventDefault();
-      $("#wrapper").toggleClass("toggled");
-  });
+    $("#menu-toggle").click(function(e) {
+        e.preventDefault();
+        $("#wrapper").toggleClass("toggled");
+    });
 
-  // var dataTable = {
-  //         "metadata" : {
-  //             "names" : ["Year","Sales","Expenses"],
-  //             "types" : ["N","N","N"]
-  //         },
-  //         "data" : [
-  //         ["2004",  1000,      400],
-  //         ["2005",  1170,      460],
-  //         ["2006",  660,       1120],
-  //         ["2007",  1030,      540]
-  //         ]
-  //     };
+    $(document).ready(function() {
+      //Draw the sidebar first
+      drawSidebar();
+    });
+
+    function drawSidebar() {
+      var sidebar = $("#sidebar");
+      var listGroup = jQuery('<div/>', {
+          class: 'list-group'
+      });
+
+      $.getJSON( "data/dashboards.json", function( data ) {
+        // var groups = [];
+        // data.forEach(function(d,index){
+        //   var group = d.group;
+        //   if($.inArray(group,groups) == -1) {
+        //     groups.push(group);
+        //   }
+        // });   
+        // var dashboards = groups.map(function (g,i){
+        //   return {
+        //     name : g,
+        //     values : data.map(function(d,i) {
+        //       if(d.group == g) { 
+        //         return d.title;
+        //       } 
+        //       return -1;
+        //     })
+        //   }
+        // });
+        // // console.log(dashboards); 
+
+
+        data.forEach(function (dashboard,index) {
+          var item = jQuery('<a/>', {
+            class: 'list-group-item',
+            id: dashboard.id,
+            href: '#',
+            title: dashboard.title,
+            text: dashboard.title
+          }).appendTo(listGroup);
+
+
+          item.on('click',function (e) {
+            drawDashboard(dashboard.id);
+          });
+        });
+
+      });
+      listGroup.appendTo(sidebar);
+    };
+
+    function drawDashboard(dashboardId) {
+      $.getJSON("data/dashboards/" + dashboardId + ".json",function (data) {
+        var title = data.title;
+        var widgets = data.widgets;
+        //clean up the canvas
+        $("#canvas").empty();
+
+        var gridster = $("#canvas").gridster( {
+            widget_base_dimensions: [100, 100],
+            widget_margins: [5, 5],
+            min_cols: 1,
+            max_cols: 8,
+            avoid_overlapped_widgets: false,
+            autogenerate_stylesheet: true,
+
+        }).data('gridster');
+
+        //draw each widget
+        for (var i = 0; i < widgets.length; i++) {
+          drawWidget(gridster,widgets[i]);
+        };
+
+      });
+    
+    };
+
+    function drawWidget(gridster,widgetId) {
+      console.log("drawing widget " + widgetId); 
+      $.getJSON("data/widgets/" + widgetId + ".json",function (widget) {
+        //create a div element to render this widget on
+        createCanvas(gridster,widget);
+
+        //fetch the dataset definition
+        var dataset = {
+            "name" : "Sales",
+            "type" : "pull",
+            "refreshRate" : 1000,
+            "columns" : ["Year:n","Sales:n","Expenses:n"],
+            "datasource" : "Sales",
+            "filters" : "" 
+        };
+
+        var dataTable = new igviz.DataTable();
+        dataset.columns.forEach(function (element,index) {
+            var tokens = element.split(":");
+            dataTable.addColumn(tokens[0],tokens[1]);
+        });
+        //get some data
+        dataTable.addRows([
+                ["2004",  1000,      400],
+                ["2005",  1170,      460],
+                ["2006",  660,       1120],
+                ["2007",  1030,      540]
+            ]);
+
+        //do some width hiegth manipulation
+        widget.config.width = widget.dimensions.width * 100;        
+        widget.config.height = widget.dimensions.height * 100;     
+
+        console.log(widget.config);    
+
+        //draw a line chart on div #scatter
+        var chart = igviz.plot("#" + widget.id,widget.config,dataTable);
+
+      });
+
+    };
+
+    function createCanvas(gridster,widget) {
+      var canvas = $('#canvas');
+      var container = jQuery('<li/>');
+
+      var panel = jQuery('<div/>', {
+        class: 'panel panel-default'
+      });
+
+      var panelBody = jQuery('<div/>', {
+        class: 'panel-body',
+        id: widget.id,
+        text: widget.title
+      }).appendTo(panel);
+
+      panel.appendTo(container);
+      container.appendTo(canvas);
+
+      gridster.add_widget(container,widget.dimensions.width, widget.dimensions.height);
+
+    }
 
      
-
-  //     var width = document.getElementById("canvas").clientWidth ;
-  //     var height = document.getElementById("canvas").clientHeight;
-
-  //     var config = {
-  //         "xAxis": 0,
-  //         "yAxis": 1,
-  //         "padding": 60,
-  //         "width": width,
-  //         "height": height,
-  //         "chartType": "bar"
-  //     }
-
-
-  //     //draw a line chart on div #scatter
-  //     var chart = igviz.plot("#canvas",config,dataTable);
-
 
   </script>
 

@@ -1,0 +1,13 @@
+{
+        "id" : "a",
+        "title" : "Sales",
+        "dimensions" : {
+            "row": 1, "col":1, "width" : 4, "height" : 2
+        },
+        "config" : {
+            "chartType" : "bar",
+            "xAxis" : 0,
+            "yAxis" : 1
+        },
+        "dataset" : "sdsdsd"
+}

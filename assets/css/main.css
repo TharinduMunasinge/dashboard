@@ -2,6 +2,20 @@
  * Base structure
  */
 
+.signin {
+	margin: 0 auto;
+	max-width: 300px;
+}
 
+/*/
+/* gridster
+/*/
 
+.gridster ul li {
+	list-style: none;
+}
+
+.gridster * {
+  margin:0;
+}
 

@@ -1,0 +1,15 @@
+{
+        "id" : "d",
+        "title" : "Sales",
+        "dimensions" : {
+            "row": 2, "col":3, "width" : 2, "height" : 2
+        },
+        "config" : {
+            "chartType" : "bar",
+            "width" : 360,
+            "height" : 240,
+            "xAxis" : 0,
+            "yAxis" : 1
+        },
+        "dataset" : "sdsdsd"
+}
