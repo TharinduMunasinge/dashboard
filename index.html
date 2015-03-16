@@ -33,7 +33,7 @@
             </button>
           </li>
           <li><a href="http://localhost/dashboard" title="Add Widget"><span class="glyphicon glyphicon glyphicon-th-large"></span></a></li>
-          <li><a href="http://localhost/dashboard" title="New Dashboard"><span class="glyphicon glyphicon-plus-sign"></span></a></li>
+          <li><a id="pusher" href="#" title="New Dashboard"><span class="glyphicon glyphicon-plus-sign"></span></a></li>
           <li><a href="http://localhost/dashboard" title="Edit Dashboard"><span class="glyphicon glyphicon-pencil"></span></a></li>
           <li><a href="http://localhost/dashboard" title="Delete Dashboard"><span class="glyphicon glyphicon-remove-circle"></span></a></li>
         </ul>
@@ -69,7 +69,7 @@
 
     <!-- Page Content -->
     <div id="page-content-wrapper">
-        <!-- <div class="container-fluid"> -->
+        <div class="container-fluid">
             <div class="row">
 
                 <div  class="gridster">
@@ -79,10 +79,9 @@
             </div>
             <!-- /row -->
 
-           <!-- <hr>
-           <p class="small text-muted">Built with &#9829; by <a href="https://wso2.com">WSO2</a></p> -->
+           
 
-        <!-- </div>   -->
+        </div>  
         <!-- /container -->
     </div>
     <!-- /#page-content-wrapper -->
@@ -98,9 +97,12 @@
   <script src="assets/js/d3.min.js"></script>
   <script src="assets/js/vega.js"></script>
   <script src="assets/js/igviz.js"></script>
+  <script src="assets/js/dashboard.js"></script>
 
   <!-- Menu Toggle Script -->
   <script>
+    var bindingSource = new dashboard.BindingSource();
+
     $("#menu-toggle").click(function(e) {
         e.preventDefault();
         $("#wrapper").toggleClass("toggled");
@@ -143,9 +145,8 @@
       $.getJSON("data/dashboards/" + dashboardId + ".json",function (data) {
         var title = data.title;
         var widgets = data.widgets;
-        //clean up the canvas
-        $("#canvas").empty();
         //Remove the data from the #canvans so that we can redraw the widgets
+        $("#canvas").empty();
         $("#canvas").removeData();
 
         var gridster = $("#canvas").gridster( {
@@ -157,59 +158,21 @@
             autogenerate_stylesheet: true
 
         }).data('gridster');
+
         //draw each widget
         for (var i = 0; i < widgets.length; i++) {
-          drawWidget(gridster,widgets[i]);
+          var widget = new Widget(widgets[i]);
+          //draw a fucking canvas first
+          createCanvas(gridster,widget);
+          //then bind data
+          drawWidget(widget,gridster,bindingSource);
+
         };
 
       });
+
+      // console.log(bindingSource); 
     
-    };
-
-    function drawWidget(gridster,widgetId) {
-      console.log("drawing widget " + widgetId); 
-      var dataview = widgetId.split(".")[0];
-      var widgetIndex = widgetId.split(".")[1];
-      $.getJSON("data/dataviews/" + dataview + ".json",function (data) {
-        var widget = data.widgets[widgetIndex];
-        //create a div element to render this widget on
-        createCanvas(gridster,widget);
-
-        //fetch the dataset definition
-        var dataset = {
-            "name" : "Sales",
-            "type" : "pull",
-            "refreshRate" : 1000,
-            "columns" : ["Year:n","Sales:n","Expenses:n"],
-            "datasource" : "Sales",
-            "filters" : "" 
-        };
-
-        var dataTable = new igviz.DataTable();
-        dataset.columns.forEach(function (element,index) {
-            var tokens = element.split(":");
-            dataTable.addColumn(tokens[0],tokens[1]);
-        });
-        //get some data
-        dataTable.addRows([
-                ["2004",  1000,      400],
-                ["2005",  1170,      460],
-                ["2006",  660,       1120],
-                ["2007",  1030,      540]
-            ]);
-
-        //do some width hiegth manipulation
-
-        widget.config.width = widget.dimensions.width * 100;        
-        widget.config.height = widget.dimensions.height * 100;     
-
-        console.log(widget.config);    
-
-        //draw a line chart on div #scatter
-        var chart = igviz.plot("#" + widget.id,widget.config,dataTable);
-
-      });
-
     };
 
     function createCanvas(gridster,widget) {
@@ -242,8 +205,6 @@
 
         var  width=gadgetObject.find('.marks').length;//attr('height');
         var height=gadgetObject.find('svg').attr('width');
-        console.log('w : '+width);
-        console.log('h : '+height);
 
         var divPanelHeading = $('<div>',{class:'panel-heading'});
         divPanelHeading.appendTo(divPanel);
@@ -267,42 +228,42 @@
         aFullScreen.appendTo(divBtnGroup);
 
 
-        aFullScreen.on('click',function(){
+          aFullScreen.on('click',function(){
 
-            var widget =  $(this).closest('.panel-default');
-            var t = aFullScreen.find('span');
+              var widget =  $(this).closest('.panel-default');
+              var t = aFullScreen.find('span');
 
-            if(widget.hasClass('maximized')){
-                widget.removeClass('maximized');
-                $('.panel-default').show();
-                widget.attr('data-sizex', 4);
-                widget.attr('data-sizey', 4);
-                t.addClass('glyphicon-fullscreen');
-                t.removeClass('glyphicon-resize-small')
-            }
-            else{
-                $('.panel-default').hide();
-                widget.show();
-                widget.attr('data-sizex', 5);
-                widget.attr('data-sizey', 5);
-                widget.addClass('maximized');
+              if(widget.hasClass('maximized')){
+                  widget.removeClass('maximized');
+                  $('.panel-default').show();
+                  widget.attr('data-sizex', 4);
+                  widget.attr('data-sizey', 4);
+                  t.addClass('glyphicon-fullscreen');
+                  t.removeClass('glyphicon-resize-small')
+              }
+              else{
+                  $('.panel-default').hide();
+                  widget.show();
+                  widget.attr('data-sizex', 5);
+                  widget.attr('data-sizey', 5);
+                  widget.addClass('maximized');
 
-                t.removeClass('glyphicon-fullscreen');
-                t.addClass('glyphicon-resize-small');
+                  t.removeClass('glyphicon-fullscreen');
+                  t.addClass('glyphicon-resize-small');
 
-                var m = divPanel.height();
-                var h = gadgetObject.find('svg').attr('height', 600);
-                console.log('h : ' + divPanel.height());
+                  var m = divPanel.height();
+                  var h = gadgetObject.find('svg').attr('height', 600);
+                  console.log('h : ' + divPanel.height());
 
-                //console.log('t: ' + t);
+                  //console.log('t: ' + t);
 
 
 
-            }
-            var l = $(this).parents('.panel-default').length;
+              }
+              var l = $(this).parents('.panel-default').length;
 
-            console.log('len : ' + l);
-        });
+              console.log('len : ' + l);
+          });
 
 
 
@@ -329,6 +290,56 @@
 //        divClearFix.appendTo(divPanel);
         return divPanel;
     }
+
+    
+
+    function drawWidget(widget) {
+      console.log("drawing widget " + widget.id); 
+      $.getJSON("data/widgets/" + widget.id + ".json",function (data) {
+        var dataTable = new igviz.DataTable();
+        data.columns.forEach(function (element,index) {
+            var tokens = element.split(":");
+            dataTable.addColumn(tokens[0],tokens[1]);
+        });
+
+        //do some width hiegth manipulation
+        data.widget.config.width = widget.dimensions.width * 100;        
+        data.widget.config.height = widget.dimensions.height * 100;     
+
+        // var chart = igviz.plot("#" + widget.id,data.widget.config,dataTable);
+        var chart = igviz.setUp("#" + widget.id,data.widget.config,dataTable);
+        bindingSource.addWidget(widget.dataview,chart);
+
+        //check for widgets type and set the data access strategy.
+        //E.g Poll if type set to batch, subscribe for WS if type set to realtime
+        //request data for this widget and register a callback to process them later
+        $.getJSON("data/data/" + data.name + ".json",function (d) {
+          handleWidgetData(d);
+        });
+        
+      });
+
+    };
+
+    function handleWidgetData(data) {
+      bindingSource.onDataReceived(data,false);
+    };
+
+    $("#pusher").click(function(e) {
+      var data = {
+        "dataview" : "1",
+        "data" : [
+                [2004,  4000,      400],
+                [2005,  1170,      460],
+                [2006,  660,       1120],
+                [2007,  1030,      140]
+        ]
+      };
+
+        bindingSource.onDataReceived(data,true);
+    });
+
+    
 
   </script>
 

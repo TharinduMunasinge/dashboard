@@ -5,7 +5,15 @@
 	"role" : "admin",
 
 	"widgets" : [
-		"c"
+		{
+            "id": "1.a",
+            "dimensions": {
+                "row": 1,
+                "col": 1,
+                "width": 6,
+                "height": 4
+            }
+        }
 	]
 
 }
