@@ -101,189 +101,189 @@
 </div>
 
 <script type="text/javascript">
-    $(document).ready(function () {
-        $.getJSON("data/samples/dataview.json", null, function (dataResponse) {
-            var dataTable = {}
-            function setType(str) {
-                if (str == 'STRING' || str == 'BOOL')
-                    return 'C'
-                else
-                    return 'N'
-            }
-            dataTable.metadata = {types: [], names: []}
-            dataTable.data = [];
-            typeList = [];
-            for (i = 0; i < dataResponse.columns.length; i++) {
-                dataTable.metadata.names.push(dataResponse.columns[i].name);
-                dataTable.metadata.types.push(setType(dataResponse.columns[i].type))
-                typeList.push(dataResponse.columns[i].type)
-            }
+   function setData(dataResponse){
+       function setType(str) {
+           if (str == 'STRING' || str == 'BOOL')
+               return 'C'
+           else
+               return 'N'
+       }
 
-            dataTable.data = writeSample(typeList);
-            dataTable.data = [
-                [0, 'Books', 'Colombo', "A", "3", 100],
-                [1, 'Pens', 'Kandy', "B", "4", 500],
+       var dataTable={};
+       dataTable.metadata = {types: [], names: []}
+       dataTable.data = [];
+       typeList = [];
+       for (i = 0; i < dataResponse.columns.length; i++) {
+           dataTable.metadata.names.push(dataResponse.columns[i].name);
+           dataTable.metadata.types.push(setType(dataResponse.columns[i].type))
+           typeList.push(dataResponse.columns[i].type)
+       }
 
-                [2, 'Pencils', 'Gampaha', "C", "5", 300],
+       dataTable.data = writeSample(typeList);
+       dataTable.data = [
+           [0, 'Books', 'Colombo', "A", "3", 100],
+           [1, 'Pens', 'Kandy', "B", "4", 500],
 
-                [3, 'Papers', 'Jaffna', "D", "7", 400],
+           [2, 'Pencils', 'Gampaha', "C", "5", 300],
 
-                [4, 'Highlighter', 'Gall', "E", "6", 200],
-            ]
+           [3, 'Papers', 'Jaffna', "D", "7", 400],
 
-            updateWidgetList(dataResponse);
+           [4, 'Highlighter', 'Gall', "E", "6", 200],
+       ]
+
+       return dataTable;
+   }
+
+   function modelShow(dataTable) {
+       $("#hiddenForm form").get(0).reset();
+       jQuery("#hiddenForm form .attr").hide();
+       jQuery("#chartDiv").empty();
+       jQuery("#data").empty();
+       dTable = d3.select("#data").append('table').attr('class', 'table table-bordered');
+       thead = dTable.append('thead');
+       thead.selectAll('td').data(dataTable.metadata.names).enter().append('td').html(function (d) {
+// console.log(d);
+           return d;
+       })
+       jQuery("#modalSave").hide();
+       for (i = 0; i < dataTable.data.length; i++) {
+           tr = dTable.append('tr');
+           tr.selectAll('td').data(dataTable.data[i]).enter().append('td').html(function (d) {
+// console.log(d);
+               return d;
+           })
+       }
+   }
+
+   function updateWidgetList(data,dataTable) {
+       d3.select("#widgets")
+               .selectAll('div.col-lg-3')
+               .data(data.widgets)
+               .enter()
+               .append('div')
+               .attr('class', 'col-lg-3 views')
+               .html(
+               function (d) {
+                   var panel;
+                   var name;
+                   var text;
+                   var image;
+                   switch (d.config.chartType) {
+                       case "bar":
+                           panel = "panel-primary";
+                           name = "Bar Chart";
+                           image = "fa-bar-chart"
+                           break;
+                       case "line":
+                           panel = "panel-green";
+                           name = "Line Chart";
+
+                           image = "fa-line-chart"
+                           break;
+                       case "area":
+                           panel = "panel-red";
+                           name = "Area Chart";
+                           image = "fa-area-chart"
+                           break;
+                   }
+                   name = "";
+                   text = "<big>" + d.title.substr(0, d.title.lastIndexOf('By') - 1) + "</big><br>" + "<small>Vs</small><br/><big>" + d.title.substr(d.title.lastIndexOf('By') + 2) + "</big>";
+                   string = '<div class="panel ' + panel + '"><div class="panel-heading"><div class="row"><div class="col-xs-3"><i class="fa ' + image + ' fa-5x"></i></div><div class="col-xs-9 text-right"><div>' + text + '</div><div>' + name + '</div></div></div></div><a href="#"><div class="panel-footer"><span class="pull-left">'+ d.title+'</span><span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span><div class="clearfix"></div></div></a></div>'
+                   return string
+               });
 
 
+       d3.selectAll(".views").on('click', function (d, i) {
+           $("#myModalLabel").html(d.title);
+           modelShow(dataTable);
+           width = 500;
+           height = 270;
 
-            function updateWidgetList(data) {
-                console.log("updateCalled",data);
-                d3.select("#widgets").selectAll('div.col-lg-3').data(data.widgets).enter().append('div').attr('class', 'col-lg-3 views').html(
-                        function (d) {
-                            var panel;
-                            var name;
-                            var text;
-                            var image;
-                            switch (d.config.chartType) {
-                                case "bar":
-                                    panel = "panel-primary";
-                                    name = "Bar Chart";
-                                    image = "fa-bar-chart"
-                                    break;
-                                case "line":
-                                    panel = "panel-green";
-                                    name = "Line Chart";
+           var config = {
+               "title": d.title,
+               "yAxis": d.config.yAxis,
+               "xAxis": d.config.xAxis,
+               "width": width,
+               "height": height,
+               "chartType": d.config.chartType
+           }
 
-                                    image = "fa-line-chart"
-                                    break;
-                                case "area":
-                                    panel = "panel-red";
-                                    name = "Area Chart";
-                                    image = "fa-area-chart"
-                                    break;
-                            }
-                            name = "";
-                            text = "<big>" + d.title.substr(0, d.title.lastIndexOf('By') - 1) + "</big><br>" + "<small>Vs</small><br/><big>" + d.title.substr(d.title.lastIndexOf('By') + 2) + "</big>";
-                            string = '<div class="panel ' + panel + '"><div class="panel-heading"><div class="row"><div class="col-xs-3"><i class="fa ' + image + ' fa-5x"></i></div><div class="col-xs-9 text-right"><div>' + text + '</div><div>' + name + '</div></div></div></div><a href="#"><div class="panel-footer"><span class="pull-left">'+ d.title+'</span><span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span><div class="clearfix"></div></div></a></div>'
-                            return string
-                        });
+           switch (d.config.chartType) {
+               case 'line':
+                   config.yAxis = [d.config.yAxis];
+                   break;
+               case 'bar':
+                   break;
+               case 'area':
+                   break;
+           }
 
-
-                function modelShow() {
-
-                    $("#hiddenForm form").get(0).reset();
-                    jQuery("#hiddenForm form .attr").hide();
-                    jQuery("#chartDiv").empty();
-                    jQuery("#data").empty();
-                    dTable = d3.select("#data").append('table').attr('class', 'table table-bordered');
-                    thead = dTable.append('thead');
-                    thead.selectAll('td').data(dataTable.metadata.names).enter().append('td').html(function (d) {
-                       // console.log(d);
-                        return d;
-                    })
-
-                    jQuery("#modalSave").hide();
-
-                    for (i = 0; i < dataTable.data.length; i++) {
-                        tr = dTable.append('tr');
-                        tr.selectAll('td').data(dataTable.data[i]).enter().append('td').html(function (d) {
-                         //   console.log(d);
-                            return d;
-                        })
-
-                    }
-
-                }
-
-                $("#addNew").click(function () {
-                    $("#myModalLabel").html("Add New Widget");
-                    modelShow();
-                    $('#myModal').modal('show')
-                })
-
-                d3.selectAll(".views").on('click', function (d, i) {
-
-                    $("#myModalLabel").html(d.title);
-                    modelShow();
-                    width = 500;
-                    height = 270;
-
-                    var config = {
-                        "title": d.title,
-                        "yAxis": d.config.yAxis,
-                        "xAxis": d.config.xAxis,
-                        "width": width,
-                        "height": height,
-                        "chartType": d.config.chartType
-                    }
-
-                    switch (d.config.chartType) {
-                        case 'line':
-                            config.yAxis = [d.config.yAxis];
-
-                            break;
-                        case 'bar':
-                            break;
-                        case 'area':
-                            break;
-                    }
-
-                    chart = igviz.setUp("#chartDiv", config, dataTable);
-                    setTimeout(function () {
-                        chart.plot(dataTable.data)
-                    }, 200)
+           chart = igviz.setUp("#chartDiv", config, dataTable);
+           setTimeout(function () {
+               chart.plot(dataTable.data)
+           }, 200)
 //                chart.plot(dataTable.data)
 
+           $('#myModal').modal('show')
 
-                    $('#myModal').modal('show')
+       })
+   }
 
 
-                })
+    $(document).ready(function () {
+        $.getJSON("data/samples/dataview.json", null, function (dataResponse) {
+            var dataTable = setData(dataResponse);
+            updateWidgetList(dataResponse,dataTable);
+            $("#addNew").click(function () {
+                $("#myModalLabel").html("Add New Widget");
+                modelShow(dataTable);
+                $('#myModal').modal('show')
+            })
 
+            d3.selectAll(".var select")
+                    .selectAll('option')
+                        .data(dataTable.metadata.names)
+                        .enter()
+                        .append('option')
+                        .attr('val', function (d) {
+                            return d
+                        })
+                        .html(function (d) {
+                            return d
+                        });
 
-                d3.selectAll(".var select").selectAll('option').data(dataTable.metadata.names).enter().append('option').attr('val', function (d) {
-                    return d
-                }).html(function (d) {
-                    return d
-                });
-                // dataTable.metadata.names
-
+            jQuery('#chartType').on('change', function (e) {
                 Dform = jQuery("#hiddenForm form .attr");
                 Dform.hide();
-                jQuery('#chartType').on('change', function (e) {
-                    Dform.hide();
-                    className = jQuery(this).children(":selected").val()
-                    jQuery("." + className).show();
+                className = jQuery(this).children(":selected").val()
+                jQuery("." + className).show();
+                var chartConfigObj = {};
 
-                    jQuery('#preview').on('click', function (e) {
-                        chartConfigObj = {};
+                jQuery('#preview').on('click', function (e) {
+
                         jQuery('.' + className).each(function (i) {
+                                dObj = d3.select(this)
+                                         .select(".form-control");
 
+                                if (jQuery(this).hasClass('var')) {
 
-                            dObj = d3.select(this).select(".form-control");
+                                    if (dObj[0][0].multiple) {
 
-
-//                          fObj=jQuery(this).children(".form-control");
-
-//                        console.log(fObj.get);
-                            if (jQuery(this).hasClass('var')) {
-
-                                if (dObj[0][0].multiple) {
-
-                                    chartConfigObj.yAxis = [];
-                                    optList = dObj[0][0].options
-                                    for (i = 0; i < optList.length; i++) {
-                                        if (optList[i].selected) {
-                                            chartConfigObj.yAxis.push(i);
+                                        chartConfigObj.yAxis = [];
+                                        optList = dObj[0][0].options
+                                        for (i = 0; i < optList.length; i++) {
+                                            if (optList[i].selected) {
+                                                chartConfigObj.yAxis.push(i);
+                                            }
                                         }
-                                    }
-                                } else
+                                    } else
 
-                                    chartConfigObj[dObj.attr('name')] = dObj[0][0].selectedIndex;
-                            }
-                            else {
-                                //  console.log("Not value",dObj);
-                                chartConfigObj[dObj.attr('name')] = dObj[0][0].value;
-                            }
+                                        chartConfigObj[dObj.attr('name')] = dObj[0][0].selectedIndex;
+                                }
+                                else {
+                                    //  console.log("Not value",dObj);
+                                    chartConfigObj[dObj.attr('name')] = dObj[0][0].value;
+                                }
 
 
                         });
@@ -306,53 +306,43 @@
                                 chartConfigObj.chartType = className;
                         }
 
-
-                        console.log(chartConfigObj)
-
-
                         chartConfigObj.width = 400;
                         chartConfigObj.height = 300;
 
-                        myChart = igviz.setUp("#chartDiv", chartConfigObj, dataTable);
-                        myChart.plot(dataTable.data);
-
-
-                        $("#modalSave").show();
+                         myChart = igviz.setUp("#chartDiv", chartConfigObj, dataTable);
+                         myChart.plot(dataTable.data);
+                         $("#modalSave").show();
 
                     });
-                    d3.select('#modalSave').on('click', function () {
-
-                        if (d3.select("#myModalLabel").text() === "Add New Widget") {
-                            widgetObj = {
-                                id: "343dfadfadf",
-                                title: chartConfigObj.title,
-                                config: JSON.parse(JSON.stringify(chartConfigObj))
-                            };
-
-                            dataResponse.widgets.push(widgetObj);
-
-                            updateWidgetList(dataResponse);
-                        }
-                        else {
-                            //update existing widgets
-
-                            console.log('updated');
-                        }
-
-                        $('#myModal').modal('hide');
-
-                    })
-
-
-                });
 
                 d3.select('#modalSave').on('click', function () {
+
+                    if (d3.select("#myModalLabel").text() === "Add New Widget") {
+                        widgetObj = {
+                            id: "343dfadfadf",
+                            title: chartConfigObj.title,
+                            config: JSON.parse(JSON.stringify(chartConfigObj))
+                        };
+
+                        dataResponse.widgets.push(widgetObj);
+
+                        updateWidgetList(dataResponse);
+                    }
+                    else {
+                        //update existing widgets
+
+                        console.log('updated');
+                    }
+
                     $('#myModal').modal('hide');
 
                 })
-            }
 
+            });
 
+            d3.select('#modalSave').on('click', function () {
+                $('#myModal').modal('hide');
+            })
         })
 
 
