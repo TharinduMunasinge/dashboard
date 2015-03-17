@@ -107,9 +107,9 @@ var         chartObject = new Chart(canvas, config, dataTable);
             }
             if (isFound) {
                 tempData[j][1] += currentYvalue;
-                console.log(name, currentYvalue, tempData[j][1]);
+            //    console.log(name, currentYvalue, tempData[j][1]);
             } else {
-                console.log("create", name, currentYvalue);
+              //  console.log("create", name, currentYvalue);
                 tempData.push([name, currentYvalue])
             }
         }
@@ -135,7 +135,7 @@ var         chartObject = new Chart(canvas, config, dataTable);
 
                 filtersList = filters.data();
 
-                console.log(filtersList)
+           //     console.log(filtersList)
                 var filterdDataset = [];
                 var selectionObj = JSON.parse(JSON.stringify(originaltable));
                 itr = 0;
@@ -170,10 +170,10 @@ var         chartObject = new Chart(canvas, config, dataTable);
 
 
             if (index < chartConfig.xAxis.length) {
-                console.log(x);
+              //  console.log(x);
                 d3.select(x.chart._el).selectAll('g.type-rect rect').on('click', function (d, i) {
                     // console.log(d, i, this);
-                    console.log(d, i);
+                 //   console.log(d, i);
                     var selectedName = d.datum.data.x;
                     //  console.log(selectedName);
                     var selectedCurrentData = JSON.parse(JSON.stringify(dataTable));
@@ -469,7 +469,7 @@ var         chartObject = new Chart(canvas, config, dataTable);
         chartObj.toolTipFunction=[];
         chartObj.toolTipFunction[0]=function(event,item){
 
-            console.log(tool,event,item);
+        //    console.log(tool,event,item);
             if(item.mark.marktype=='symbol') {
                 xVar = dataTable.metadata.names[chartConfig.xAxis]
                 yVar = dataTable.metadata.names[chartConfig.yAxis]
@@ -1254,7 +1254,7 @@ var         chartObject = new Chart(canvas, config, dataTable);
         chartObj.toolTipFunction[0]=function(event,item){
 
 
-            console.log(tool,event,item);
+          //  console.log(tool,event,item);
             if(item.mark.marktype=='symbol') {
 
 
@@ -1468,7 +1468,7 @@ var         chartObject = new Chart(canvas, config, dataTable);
 
             a=4
 
-            console.log(tool,event,item);
+        //    console.log(tool,event,item);
             if(item.mark.marktype=='symbol') {
            // window.alert(a);
 
@@ -1670,7 +1670,7 @@ var         chartObject = new Chart(canvas, config, dataTable);
     function setScale(scaleConfig){
         var scale={"name":scaleConfig.name};
 
-        console.log(scaleConfig.schema,scaleConfig.index);
+      //  console.log(scaleConfig.schema,scaleConfig.index);
 
         dataFrom="table";
 
@@ -1735,14 +1735,14 @@ var         chartObject = new Chart(canvas, config, dataTable);
         if (scaleConfig.hasOwnProperty("zero")) {
             scale["zero"] = scaleConfig.zero;
         }
-        console.log(scale);
+      //  console.log(scale);
         return scale;
 
     }
 
     function setAxis(axisConfig){
 
-        console.log("Axis",axisConfig);
+    //    console.log("Axis",axisConfig);
 
         axis=  {
             "type": axisConfig.type,
@@ -1789,7 +1789,7 @@ var         chartObject = new Chart(canvas, config, dataTable);
             axis["tickPadding"] = axisConfig.tickPadding;
         }
 
-        console.log("SpecAxis",axis);
+      //  console.log("SpecAxis",axis);
         return axis;
     }
 
@@ -2261,7 +2261,7 @@ var         chartObject = new Chart(canvas, config, dataTable);
         }
         chartObj.toolTipFunction=[];
         chartObj.toolTipFunction[0]=function(event,item){
-            console.log(tool,event,item);
+       //     console.log(tool,event,item);
             xVar=dataTable.metadata.names[chartConfig.xAxis]
             yVar=dataTable.metadata.names[chartConfig.yAxis]
             pSize=dataTable.metadata.names[chartConfig.pointSize]
@@ -2637,7 +2637,7 @@ var         chartObject = new Chart(canvas, config, dataTable);
                 });
 
         } else {
-            console.log("We are here baby!");
+          //  console.log("We are here baby!");
             //appending the rows inside the table body
             rows.style('background-color', function (d, i) {
 
@@ -2772,8 +2772,8 @@ var         chartObject = new Chart(canvas, config, dataTable);
         };
 
         function drawMarkersMap(array) {
-            console.log(google)
-            console.log(google.visualization);
+            //console.log(google)
+            //console.log(google.visualization);
             var data = google.visualization.arrayToDataTable(array);
 
             var options = {
@@ -3182,7 +3182,7 @@ var         chartObject = new Chart(canvas, config, dataTable);
     };
 
     igviz.DataTable.prototype.toJSON = function () {
-        console.log(this);
+       // console.log(this);
     };
 
 
@@ -3320,10 +3320,10 @@ var         chartObject = new Chart(canvas, config, dataTable);
             if(callback)
               callback.call(ref);
 
-            console.log("inside",ref);
+           // console.log("inside",ref);
         });
 
-        console.log(this);
+      //  console.log(this);
 
 
     }

@@ -15,8 +15,8 @@
     <!-- Morris Charts CSS -->
     <!--<link href="assets/css/morris.css" rel="stylesheet">
     --><!-- Custom Fonts -->
-    <link href="assets/css/font-awesome.min.css" rel="stylesheet"  type="text/css">
-    <link href="assets/css/igviz.css" rel="stylesheet"  type="text/css">
+    <link href="assets/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <link href="assets/css/igviz.css" rel="stylesheet" type="text/css">
 
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -102,216 +102,255 @@
 
 <script type="text/javascript">
     $(document).ready(function () {
-        $.getJSON("data/samples/dataview.json", null, function (data) {
-            d3.select("#widgets").selectAll('div.col-lg-3').data(data.widgets).enter().append('div').attr('class', 'col-lg-3 views').html(
-                    function (d) {
-                        var panel;
-                        var name;
-                        var text;
-                        var image;
-                        switch (d.config.chartType) {
-                            case "bar":
-                                panel = "panel-primary";
-                                name = "Bar Chart";
-                                image = "fa-bar-chart"
-                                break;
-                            case "line":
-                                panel = "panel-green";
-                                name = "Line Chart";
-
-                                image = "fa-line-chart"
-                                break;
-                            case "area":
-                                panel = "panel-red";
-                                name = "Area Chart";
-                                image = "fa-area-chart"
-                                break;
-                        }
-                        name = "";
-                        text = "<big>" + d.title.substr(0, d.title.lastIndexOf('By') - 1) + "</big><br>" + "<small>Vs</small><br/><big>" + d.title.substr(d.title.lastIndexOf('By') + 2) + "</big>";
-                        string = '<div class="panel ' + panel + '"><div class="panel-heading"><div class="row"><div class="col-xs-3"><i class="fa ' + image + ' fa-5x"></i></div><div class="col-xs-9 text-right"><div>' + text + '</div><div>' + name + '</div></div></div></div><a href="#"><div class="panel-footer"><span class="pull-left">View Details</span><span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span><div class="clearfix"></div></div></a></div>'
-                        return string
-                    });
-
-
-            var dataTable={}
-
+        $.getJSON("data/samples/dataview.json", null, function (dataResponse) {
+            var dataTable = {}
             function setType(str) {
                 if (str == 'STRING' || str == 'BOOL')
                     return 'C'
                 else
                     return 'N'
             }
-
             dataTable.metadata = {types: [], names: []}
             dataTable.data = [];
             typeList = [];
-            for (i = 0; i < data.columns.length; i++) {
-                dataTable.metadata.names.push(data.columns[i].name);
-                dataTable.metadata.types.push(setType(data.columns[i].type))
-                typeList.push(data.columns[i].type)
+            for (i = 0; i < dataResponse.columns.length; i++) {
+                dataTable.metadata.names.push(dataResponse.columns[i].name);
+                dataTable.metadata.types.push(setType(dataResponse.columns[i].type))
+                typeList.push(dataResponse.columns[i].type)
             }
 
             dataTable.data = writeSample(typeList);
-            dataTable.data=[
-                [0,'Books','Colombo',"A","3",100],
-                [1,'Pens','Kandy',"B","4",500],
+            dataTable.data = [
+                [0, 'Books', 'Colombo', "A", "3", 100],
+                [1, 'Pens', 'Kandy', "B", "4", 500],
 
-                [2,'Pencils','Gampaha',"C","5",300],
+                [2, 'Pencils', 'Gampaha', "C", "5", 300],
 
-                [3,'Papers','Jaffna',"D","7",400],
+                [3, 'Papers', 'Jaffna', "D", "7", 400],
 
-                [4,'Highlighter','Gall',"E","6",200],
+                [4, 'Highlighter', 'Gall', "E", "6", 200],
             ]
 
-            function modelShow(){
-                $("#hiddenForm form").get(0).reset();
-                jQuery("#hiddenForm form .attr").hide();
-                jQuery("#chartDiv").empty();
-                jQuery("#data").empty();
-                dTable = d3.select("#data").append('table').attr('class', 'table table-bordered');
-                thead = dTable.append('thead');
-                thead.selectAll('td').data(dataTable.metadata.names).enter().append('td').html(function (d) {
-                    console.log(d);
-                    return d;
-                })
+            updateWidgetList(dataResponse);
 
-                for (i = 0; i < dataTable.data.length; i++) {
-                    tr = dTable.append('tr');
-                    tr.selectAll('td').data(dataTable.data[i]).enter().append('td').html(function (d) {
-                        console.log(d);
+
+
+            function updateWidgetList(data) {
+                console.log("updateCalled",data);
+                d3.select("#widgets").selectAll('div.col-lg-3').data(data.widgets).enter().append('div').attr('class', 'col-lg-3 views').html(
+                        function (d) {
+                            var panel;
+                            var name;
+                            var text;
+                            var image;
+                            switch (d.config.chartType) {
+                                case "bar":
+                                    panel = "panel-primary";
+                                    name = "Bar Chart";
+                                    image = "fa-bar-chart"
+                                    break;
+                                case "line":
+                                    panel = "panel-green";
+                                    name = "Line Chart";
+
+                                    image = "fa-line-chart"
+                                    break;
+                                case "area":
+                                    panel = "panel-red";
+                                    name = "Area Chart";
+                                    image = "fa-area-chart"
+                                    break;
+                            }
+                            name = "";
+                            text = "<big>" + d.title.substr(0, d.title.lastIndexOf('By') - 1) + "</big><br>" + "<small>Vs</small><br/><big>" + d.title.substr(d.title.lastIndexOf('By') + 2) + "</big>";
+                            string = '<div class="panel ' + panel + '"><div class="panel-heading"><div class="row"><div class="col-xs-3"><i class="fa ' + image + ' fa-5x"></i></div><div class="col-xs-9 text-right"><div>' + text + '</div><div>' + name + '</div></div></div></div><a href="#"><div class="panel-footer"><span class="pull-left">'+ d.title+'</span><span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span><div class="clearfix"></div></div></a></div>'
+                            return string
+                        });
+
+
+                function modelShow() {
+
+                    $("#hiddenForm form").get(0).reset();
+                    jQuery("#hiddenForm form .attr").hide();
+                    jQuery("#chartDiv").empty();
+                    jQuery("#data").empty();
+                    dTable = d3.select("#data").append('table').attr('class', 'table table-bordered');
+                    thead = dTable.append('thead');
+                    thead.selectAll('td').data(dataTable.metadata.names).enter().append('td').html(function (d) {
+                       // console.log(d);
                         return d;
                     })
 
+                    jQuery("#modalSave").hide();
+
+                    for (i = 0; i < dataTable.data.length; i++) {
+                        tr = dTable.append('tr');
+                        tr.selectAll('td').data(dataTable.data[i]).enter().append('td').html(function (d) {
+                         //   console.log(d);
+                            return d;
+                        })
+
+                    }
+
                 }
 
-            }
+                $("#addNew").click(function () {
+                    $("#myModalLabel").html("Add New Widget");
+                    modelShow();
+                    $('#myModal').modal('show')
+                })
 
-            $("#addNew").click(function () {
-                $("#myModalLabel").html("Add New Widget");
-                modelShow();
-                $('#myModal').modal('show')
-            })
+                d3.selectAll(".views").on('click', function (d, i) {
 
-            d3.selectAll(".views").on('click', function (d, i) {
+                    $("#myModalLabel").html(d.title);
+                    modelShow();
+                    width = 500;
+                    height = 270;
 
-                $("#myModalLabel").html(d.title);
-                modelShow();
-                width=500;
-                height=270;
+                    var config = {
+                        "title": d.title,
+                        "yAxis": d.config.yAxis,
+                        "xAxis": d.config.xAxis,
+                        "width": width,
+                        "height": height,
+                        "chartType": d.config.chartType
+                    }
 
-                var config = {
-                    "title": d.title,
-                    "yAxis": d.config.yAxis,
-                    "xAxis": d.config.xAxis,
-                    "width": width,
-                    "height": height,
-                    "chartType": d.config.chartType}
+                    switch (d.config.chartType) {
+                        case 'line':
+                            config.yAxis = [d.config.yAxis];
 
-                switch (d.config.chartType)
-                {
-                    case 'line':
-                        config.yAxis=[d.config.yAxis];
+                            break;
+                        case 'bar':
+                            break;
+                        case 'area':
+                            break;
+                    }
 
-                        break;
-                    case 'bar':break;
-                    case 'area':break;
-                }
-
-                chart=igviz.setUp("#chartDiv",config,dataTable);
-                setTimeout(function(){
-                    chart.plot(dataTable.data)},200)
+                    chart = igviz.setUp("#chartDiv", config, dataTable);
+                    setTimeout(function () {
+                        chart.plot(dataTable.data)
+                    }, 200)
 //                chart.plot(dataTable.data)
 
 
-                $('#myModal').modal('show')
+                    $('#myModal').modal('show')
 
 
-            })
+                })
 
 
-            d3.selectAll(".var select").selectAll('option').data(dataTable.metadata.names).enter().append('option').attr('val',function(d){return d}).html(function(d){return d});
-           // dataTable.metadata.names
+                d3.selectAll(".var select").selectAll('option').data(dataTable.metadata.names).enter().append('option').attr('val', function (d) {
+                    return d
+                }).html(function (d) {
+                    return d
+                });
+                // dataTable.metadata.names
 
-            Dform=jQuery("#hiddenForm form .attr");
-            Dform.hide();
-
-            jQuery('#chartType').on('change',function(e){
+                Dform = jQuery("#hiddenForm form .attr");
                 Dform.hide();
-                className=jQuery(this).children(":selected").val()
-                jQuery("."+className).show();
+                jQuery('#chartType').on('change', function (e) {
+                    Dform.hide();
+                    className = jQuery(this).children(":selected").val()
+                    jQuery("." + className).show();
 
-                jQuery('#preview').on('click',function(e){
+                    jQuery('#preview').on('click', function (e) {
+                        chartConfigObj = {};
+                        jQuery('.' + className).each(function (i) {
 
 
-                    chartConfigObj={};
-
-                    jQuery('.'+className).each(function(i){
-
-
-                       dObj= d3.select(this).select(".form-control");
+                            dObj = d3.select(this).select(".form-control");
 
 
 //                          fObj=jQuery(this).children(".form-control");
 
 //                        console.log(fObj.get);
-                        if(jQuery(this).hasClass('var')){
+                            if (jQuery(this).hasClass('var')) {
 
-                            if(dObj[0][0].multiple){
+                                if (dObj[0][0].multiple) {
 
-                                chartConfigObj.yAxis=[];
-                                optList=dObj[0][0].options
-                               for(i=0;i<optList.length;i++){
-                                   if(optList[i].selected){
-                                       chartConfigObj.yAxis.push(i);
-                                   }
-                               }
-                            }else
+                                    chartConfigObj.yAxis = [];
+                                    optList = dObj[0][0].options
+                                    for (i = 0; i < optList.length; i++) {
+                                        if (optList[i].selected) {
+                                            chartConfigObj.yAxis.push(i);
+                                        }
+                                    }
+                                } else
 
-                            chartConfigObj[dObj.attr('name')]=dObj[0][0].selectedIndex;
+                                    chartConfigObj[dObj.attr('name')] = dObj[0][0].selectedIndex;
+                            }
+                            else {
+                                //  console.log("Not value",dObj);
+                                chartConfigObj[dObj.attr('name')] = dObj[0][0].value;
+                            }
+
+
+                        });
+
+                        switch (className) {
+                            case "stackedArea":
+                                chartConfigObj.chartType = "area";
+                                break;
+                            case "groupedBar":
+                                chartConfigObj.chartType = "bar";
+                                break;
+                            case "multiArea":
+                                chartConfigObj.chartType = "area";
+                                break;
+                            case "stackedBar":
+                                chartConfigObj.chartType = "bar";
+                                chartConfigObj.format = "stacked";
+                                break;
+                            default:
+                                chartConfigObj.chartType = className;
                         }
-                        else
-                        {
-                          //  console.log("Not value",dObj);
-                            chartConfigObj[dObj.attr('name')]=dObj[0][0].value;
-                        }
 
 
+                        console.log(chartConfigObj)
+
+
+                        chartConfigObj.width = 400;
+                        chartConfigObj.height = 300;
+
+                        myChart = igviz.setUp("#chartDiv", chartConfigObj, dataTable);
+                        myChart.plot(dataTable.data);
+
+
+                        $("#modalSave").show();
 
                     });
+                    d3.select('#modalSave').on('click', function () {
 
-                    switch (className){
-                        case "stackedArea":
-                            chartConfigObj.chartType="area";
-                            break;
-                        case "groupedBar":
-                            chartConfigObj.chartType="bar";
-                            break;
-                        case "multiArea":
-                            chartConfigObj.chartType="area";
-                            break;
-                        case "stackedBar":
-                            chartConfigObj.chartType="bar";
-                            chartConfigObj.format="stacked";
-                            break;
-                        default:
-                            chartConfigObj.chartType=className;
-                    }
+                        if (d3.select("#myModalLabel").text() === "Add New Widget") {
+                            widgetObj = {
+                                id: "343dfadfadf",
+                                title: chartConfigObj.title,
+                                config: JSON.parse(JSON.stringify(chartConfigObj))
+                            };
 
+                            dataResponse.widgets.push(widgetObj);
 
-                    console.log(chartConfigObj)
-                    chartConfigObj.width=400;
-                    chartConfigObj.height=300;
+                            updateWidgetList(dataResponse);
+                        }
+                        else {
+                            //update existing widgets
 
-                    myChart=igviz.setUp("#chartDiv",chartConfigObj,dataTable);
-                    myChart.plot(dataTable.data);
+                            console.log('updated');
+                        }
+
+                        $('#myModal').modal('hide');
+
+                    })
 
 
                 });
 
-            });
+                d3.select('#modalSave').on('click', function () {
+                    $('#myModal').modal('hide');
 
-
+                })
+            }
 
 
         })
@@ -329,15 +368,16 @@
                     <span aria-hidden="true">&times;</span></button>
                 <h4 class="modal-title" id="myModalLabel">Modal title</h4>
             </div>
-             <div class="modal-body">
+            <div class="modal-body">
 
                 <div class="col-md-12">
 
 
                     <div class="row">
                         <div class="col-md-6">
-                        <p>Preview :</p>
-                        <div id="chartDiv"></div>
+                            <p>Preview :</p>
+
+                            <div id="chartDiv"></div>
 
                         </div>
 
@@ -348,17 +388,14 @@
 
                                 <div id="hiddenForm" class="col-md-11">
                                     <form class="form-horizontal">
-                                         <div class="form-group">
-                                             <label for="title" class="col-sm-6 control-label">Title</label>
-                                             <div class="col-sm-6">
-                                                 <input type="text" class="form-control" id="title" placeholder="title">
-                                             </div>
-                                         </div>
 
                                         <div class="form-group" id="chartTypeSelection">
-                                            <label for="chartType" class="col-sm-6 control-label">Chart Type </label>
+                                            <label for="chartType" class="col-sm-6 control-label">Chart
+                                                Type </label>
+
                                             <div class="col-sm-6">
-                                                <select class="form-control" id="chartType" name="chartType">
+                                                <select class="form-control" id="chartType"
+                                                        name="chartType">
                                                     <option value="">--Select--</option>
                                                     <option value="bar">Bar</option>
                                                     <option value="line">Line</option>
@@ -371,75 +408,105 @@
                                                 </select>
                                             </div>
                                         </div>
+                                        <div class="form-group attr bar line area stackedBar groupedBar stackedArea multiArea scatter">
+                                            <label for="title"
+                                                   class="col-sm-6 control-label">Title</label>
+
+                                            <div class="col-sm-6">
+                                                <input name='title' type="text" class="form-control"
+                                                       id="title" placeholder="title">
+                                            </div>
+                                        </div>
 
                                         <div class="form-group attr var bar line area stackedBar groupedBar stackedArea multiArea scatter">
-                                            <label for="xAxis" class="col-sm-6 control-label">X-Axis </label>
+                                            <label for="xAxis"
+                                                   class="col-sm-6 control-label">X-Axis </label>
+
                                             <div class="col-sm-6">
-                                                <select class="form-control" id="xAxis" name="xAxis">
+                                                <select class="form-control" id="xAxis"
+                                                        name="xAxis">
                                                 </select>
                                             </div>
                                         </div>
 
 
                                         <div class="form-group var attr bar area stackedBar groupedBar stackedArea  scatter">
-                                            <label for="yAxis" class="col-sm-6 control-label">Y-Axis </label>
+                                            <label for="yAxis"
+                                                   class="col-sm-6 control-label">Y-Axis </label>
+
                                             <div class="col-sm-6">
-                                                <select class="form-control" id="yAxis" name="yAxis">
+                                                <select class="form-control" id="yAxis"
+                                                        name="yAxis">
                                                 </select>
                                             </div>
                                         </div>
 
                                         <div class="form-group var  attr line multiArea">
                                             <label for="yAxises" class="col-sm-6 control-label">Y-Axis </label>
+
                                             <div class="col-sm-6">
-                                                <select multiple class="form-control" id="yAxises" name="yAxis">
+                                                <select multiple class="form-control" id="yAxises"
+                                                        name="yAxis">
 
                                                 </select>
                                             </div>
                                         </div>
                                         <div class="form-group var attr stackedBar groupedBar stackedArea ">
                                             <label for="groupedBy" class="col-sm-6 control-label">GroupedBy </label>
+
                                             <div class="col-sm-6">
-                                                <select class="form-control" id="groupedBy" name="groupedBy">
+                                                <select class="form-control" id="groupedBy"
+                                                        name="groupedBy">
                                                 </select>
                                             </div>
                                         </div>
 
                                         <div class="form-group var scatter attr">
-                                            <label for="pointColor" class="col-sm-6 control-label">Color variable </label>
+                                            <label for="pointColor" class="col-sm-6 control-label">Color
+                                                variable </label>
+
                                             <div class="col-sm-6">
-                                                <select class="form-control" id="pointColor" name="pointColor">
+                                                <select class="form-control" id="pointColor"
+                                                        name="pointColor">
                                                 </select>
                                             </div>
                                         </div>
-
 
 
                                         <div class="form-group var scatter attr">
-                                            <label for="pointSize" class="col-sm-6 control-label">Color variable </label>
+                                            <label for="pointSize" class="col-sm-6 control-label">Color
+                                                variable </label>
+
                                             <div class="col-sm-6">
-                                                <select class="form-control" id="pointSize" name="pointSize">
+                                                <select class="form-control" id="pointSize"
+                                                        name="pointSize">
                                                 </select>
                                             </div>
                                         </div>
-                                        <div class="form-group  scatter attr" >
-                                            <label for="minColor" class="col-sm-6 control-label">Color For Max value </label>
+                                        <div class="form-group  scatter attr">
+                                            <label for="minColor" class="col-sm-6 control-label">Color
+                                                For Max value </label>
+
                                             <div class="col-sm-6">
-                                                <input type="color"  class="form-control" id="minColor" name="minColor">
+                                                <input type="color" class="form-control"
+                                                       id="minColor" name="minColor">
 
                                             </div>
                                         </div>
 
                                         <div class="form-group  scatter attr">
-                                            <label for="maxColor" class="col-sm-6 control-label">Color For Min Value </label>
+                                            <label for="maxColor" class="col-sm-6 control-label">Color
+                                                For Min Value </label>
+
                                             <div class="col-sm-6">
-                                                <input type="color"  class="form-control"  id="maxColor" name="maxColor">
+                                                <input type="color" class="form-control"
+                                                       id="maxColor" name="maxColor">
 
                                             </div>
                                         </div>
                                         <div class="form-group">
                                             <div class="col-sm-offset-2 col-sm-6">
-                                                <a id="preview"  class="btn btn-default">Preview</a>
+                                                <a id="preview" class="btn btn-default">Preview</a>
                                             </div>
                                         </div>
 
@@ -466,14 +533,12 @@
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">Close
                 </button>
-                <button type="button" class="btn btn-primary">Save changes</button>
+                <button id="modalSave" type="button" class="btn btn-primary">Save changes</button>
             </div>
         </div>
 
+    </div>
 </div>
-</div>
-
-
 
 
 </body>
